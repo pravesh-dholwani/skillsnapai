@@ -3,4 +3,5 @@ streamlit-cookies-controller
 langchain_groq
 langchain
 langchain_community
-dotenv
+python-dotenv
+pypdf
