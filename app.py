@@ -41,3 +41,5 @@ if file is not None:
     finally:
         # Clean up the temporary file
         os.remove(pdf_path)
+else:
+    print("file none.")
