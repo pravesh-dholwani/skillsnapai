@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 import tempfile
-import traceback
+
 from main import main
 
 st.title("SkillSnap AI")
@@ -16,11 +16,11 @@ if file is not None:
     with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_pdf:
         temp_pdf.write(file.getbuffer())
         pdf_path = temp_pdf.name
-        print("uploaded file.")
 
     try:
-        print("started analysis")
-        analysis = main(pdf_path)
+        with st.spinner("Analyzing your resume... This may take a moment."):
+            analysis = main(pdf_path)
+            
         if "is_resume" in analysis and analysis["is_resume"] is False:
             st.error("Not a Valid Resume. Please Upload a Valid Resume.")
         else:
@@ -31,15 +31,13 @@ if file is not None:
                 wrong_points = detailed.get('wrong', 'N/A')
                 improvement_points = detailed.get('improvement', 'N/A')
 
-                if len(wrong_points) == 0:
+                if not wrong_points or len(wrong_points) == 0:
                     wrong_points = "Nothing wrong."
 
                 st.markdown(f"**What's Good:** {good_points}")
                 st.markdown(f"**What's Wrong:** {wrong_points}")
                 st.markdown(f"**What to Add/Improve:** {improvement_points}")
                 st.markdown("---")
-    except Exception as e:
-        traceback.print_exc()
     finally:
         # Clean up the temporary file
         os.remove(pdf_path)
