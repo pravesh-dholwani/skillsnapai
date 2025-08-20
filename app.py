@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 import tempfile
+import logging
 
 from main import main
 
@@ -11,7 +12,9 @@ os.environ["GROQ_API_KEY"] = st.secrets['GROQ_API_KEY']
 
 
 file = st.file_uploader("Upload your resume.", accept_multiple_files=False, type=["pdf"])
+logging.debug("fetch file.")
 if file is not None:
+    logging.debug("fetch not none.")
     # Use a temporary file to handle the upload safely, especially for deployed apps
     with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_pdf:
         temp_pdf.write(file.getbuffer())
@@ -42,4 +45,4 @@ if file is not None:
         # Clean up the temporary file
         os.remove(pdf_path)
 else:
-    print("file none.")
+    logging.debug("file none.")
