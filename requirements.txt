@@ -1,0 +1,6 @@
+streamlit
+streamlit-cookies-controller
+langchain_groq
+langchain
+langchain_community
+dotenv
