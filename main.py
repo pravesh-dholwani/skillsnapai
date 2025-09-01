@@ -107,13 +107,14 @@ def get_pdf_content(pdf_path):
 
 def main(pdf_file):
     analysis = {}
+    print("analysis started")
     # pdf_file = "resumes/resume_pravesh.pdf"  # Replace with your PDF file path
     if not os.path.exists(pdf_file):
         print(f"Error: PDF file '{pdf_file}' not found.")
     else:
         pdf_content = get_pdf_content(pdf_file)
         if pdf_content:
-            # print("Resume content loaded successfully. Analyzing with Groq...")
+            print("Resume content loaded successfully. Analyzing with AI...")
 
             SYSTEM_PROMPT = '''
             You are an expert Resume Analyzer. Your task is to take out all information from the resume and divide it into 5 sections - skills, experience, achievements, education, Contact Details.
@@ -122,7 +123,7 @@ def main(pdf_file):
             2) Give the output in valid JSON format. where the key is the section name and the value is the information.
             3) If the information for a specific section is not available, then leave it blank.
 
-            The output should consider 5 keys - skills, experience, achievements, education, contact_details.
+            The output should consider 5 keys - skills, experience, achievements, education, contact_details, is_resume.
             If the content is not looking or evaluating as resume you add the key is_resume in aoutput with value false.
             Each Key should have a json having all the information (not just summary) for specific section.
 
@@ -136,21 +137,21 @@ def main(pdf_file):
             # Initialize the Groq LLM
             # llm = ChatGroq(model_name="llama3-8b-8192", temperature=0.2)
             # llm = ChatGroq(model_name="deepseek-r1-distill-llama-70b", temperature=0.0)
-            llm = ChatGroq(model="meta-llama/llama-4-scout-17b-16e-instruct", temperature=0.1)
+            llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.1)
 
             # Create the chain to process the input
             extraction_chain = prompt | llm | JsonOutputParser()
 
             extracted_data = extraction_chain.invoke({"resume": pdf_content})
-            # print("\n--- Groq LLM Initial Extraction ---\n")
-            # print(extracted_data)
+            print("\n--- Groq LLM Initial Extraction ---\n")
+            print(extracted_data)
 
-            if extracted_data["is_resume"] is False:
+            if "is_resume" in extracted_data and extracted_data["is_resume"] is False:
                 return {
                     "is_resume": False
                 }
 
-            # print("\n\n--- Detailed Section Analysis ---\n")
+            print("\n\n--- Detailed Section Analysis ---\n")
             # We can analyze a few key sections
             sections_to_analyze = ['skills', 'experience', 'achievements', 'education']
             
